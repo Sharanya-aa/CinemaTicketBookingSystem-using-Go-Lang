@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation - Cinema Booking System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2b3340 0%, #1a1e29 100%);
+            color: #fff;
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        nav ul li {
+            margin-left: 2rem;
+        }
+        
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: #64b5f6;
+        }
+        
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            min-height: calc(100vh - 180px);
+        }
+        
+        .confirmation-card {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .confirmation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #1a73e8, #64b5f6);
+        }
+        
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background-color: #e8f5e9;
+            color: #4caf50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2.5rem;
+        }
+        
+        .confirmation-card h1 {
+            color: #1a73e8;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .confirmation-details {
+            text-align: left;
+            max-width: 600px;
+            margin: 2rem auto;
+            background-color: #fff;
+            border-radius: 8px;
+        }
+        
+        .confirmation-details .section {
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            background-color: #fafafa;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+        
+        .confirmation-details h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: #1a1e29;
+            font-weight: 600;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.5rem;
+        }
+        
+        .seat-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .seat-tag {
+            background-color: #e3f2fd;
+            color: #1a73e8;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .total {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+        
+        .total h3 {
+            color: #2e7d32;
+            border-bottom-color: #c8e6c9;
+        }
+        
+        .total p {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .print-btn {
+            background: linear-gradient(90deg, #1a73e8, #64b5f6);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            margin-top: 2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+            transition: all 0.3s;
+            letter-spacing: 0.5px;
+        }
+        
+        .print-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(26, 115, 232, 0.4);
+        }
+        
+        .qr-code {
+            margin: 2rem auto;
+            text-align: center;
+        }
+        
+        .qr-code img {
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 10px;
+            background: white;
+        }
+        
+        .qr-code-label {
+            margin-top: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #1a73e8;
+        }
+        
+        .ticket-note {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        footer {
+            background: linear-gradient(135deg, #2b3340 0%, #1a1e29 100%);
+            color: #fff;
+            text-align: center;
+            padding: 1.5rem 0;
+            margin-top: 2rem;
+        }
+        
+        @media print {
+            header, footer, .print-btn, .ticket-note {
+                display: none;
+            }
+            
+            body {
+                background-color: #fff;
+                color: #000;
+                font-size: 12pt;
+            }
+            
+            .confirmation-card {
+                box-shadow: none;
+                padding: 0;
+                margin: 0;
+            }
+            
+            .confirmation-card::before {
+                display: none;
+            }
+            
+            .confirmation-details {
+                page-break-inside: avoid;
+                margin-top: 20px;
+            }
+            
+            .confirmation-details .section {
+                border: 1px solid #eee;
+                margin-bottom: 10px;
+            }
+            
+            .qr-code {
+                page-break-inside: avoid;
+                margin: 30px auto;
+                text-align: center;
+            }
+            
+            .qr-code img {
+                max-width: 150px;
+                height: auto;
+                border: 1px solid #eee;
+            }
+            
+            .success-icon {
+                background-color: #fff;
+                color: #000;
+                border: 2px solid #000;
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+            
+            .seat-tag {
+                border: 1px solid #ccc;
+                background-color: #fff;
+                color: #000;
+            }
+            
+            .total {
+                border: 1px solid #ccc;
+                background-color: #fff;
+                color: #000;
+            }
+            
+            /* Add printable ticket footer */
+            .confirmation-card:after {
+                content: "This is your official ticket. Please bring it with you to the cinema.";
+                display: block;
+                border-top: 1px dashed #ccc;
+                margin-top: 50px;
+                padding-top: 10px;
+                font-size: 10pt;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Cinema Booking</div>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/movies">Movies</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="confirmation-card">
+            <div class="success-icon">✓</div>
+            <h1>Booking Confirmed!</h1>
+            <p>Thank you for your booking. Your tickets are confirmed and ready to use.</p>
+            
+            <div class="confirmation-details" id="booking-details">
+                <!-- Booking details will be populated here -->
+                <div class="section">Loading booking details...</div>
+            </div>
+            
+            <div class="qr-code" id="qrcode"></div>
+            
+            <p class="ticket-note">Please show this confirmation or QR code at the cinema entrance. We recommend arriving 15 minutes before the show starts.</p>
+            
+            <button class="print-btn" onclick="window.print()">Print Ticket</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Cinema Booking System. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get booking ID from URL
+            const pathParts = window.location.pathname.split('/');
+            const bookingId = pathParts[pathParts.length - 1];
+            
+            if (bookingId) {
+                fetchBookingDetails(bookingId);
+                generateQRCode(bookingId);
+            } else {
+                document.getElementById('booking-details').innerHTML = 
+                    '<div class="section">No booking ID provided. <a href="/movies">Browse movies</a></div>';
+                document.getElementById('qrcode').style.display = 'none';
+            }
+        });
+        
+        // Function to generate QR code
+        function generateQRCode(bookingId) {
+            // Create a verification URL based on booking ID
+            const verificationUrl = `https://cinema-booking.com/verify/${bookingId}`;
+            
+            // Generate QR code
+            const qrContainer = document.getElementById('qrcode');
+            
+            try {
+                // Create QR code using the library
+                const qr = qrcode(4, 'M');
+                qr.addData(verificationUrl);
+                qr.make();
+                
+                // Render QR code
+                const qrImg = qr.createImgTag(5);
+                qrContainer.innerHTML = qrImg + `<div class="qr-code-label">Booking #${bookingId}</div>`;
+            } catch (e) {
+                // Fallback to simpler approach if library fails
+                fallbackQRCode(bookingId, qrContainer);
+            }
+        }
+        
+        // Fallback if QR library fails
+        function fallbackQRCode(bookingId, container) {
+            // Generate a simpler QR-like image
+            const size = 150;
+            const boxSize = 5;
+            const grid = Math.floor(size / boxSize);
+            
+            let qrHTML = `<div style="width:${size}px;height:${size}px;background:#fff;display:inline-block;padding:10px;">`;
+            
+            // Generate a deterministic pattern based on booking ID
+            const seed = bookingId.toString().split('').map(c => c.charCodeAt(0)).reduce((a, b) => a + b, 0);
+            
+            // Create QR code frame with position markers
+            for (let y = 0; y < grid; y++) {
+                for (let x = 0; x < grid; x++) {
+                    // Position detection patterns (corners)
+                    let isBlack = false;
+                    
+                    // Top-left, Top-right, and Bottom-left position detection patterns
+                    if ((x < 7 && y < 7) || (x > grid - 8 && y < 7) || (x < 7 && y > grid - 8)) {
+                        // Outer square
+                        if (x === 0 || x === 6 || x === grid - 7 || x === grid - 1 || 
+                            y === 0 || y === 6 || y === grid - 7 || y === grid - 1 ||
+                            // Inner square
+                            (x > 1 && x < 5 && y > 1 && y < 5) ||
+                            (x > grid - 6 && x < grid - 2 && y > 1 && y < 5) ||
+                            (x > 1 && x < 5 && y > grid - 6 && y < grid - 2)) {
+                            isBlack = true;
+                        }
+                    } 
+                    // Data pattern (deterministic based on booking ID)
+                    else {
+                        isBlack = (Math.sin(x * y * seed) > 0);
+                    }
+                    
+                    qrHTML += `<div style="width:${boxSize}px;height:${boxSize}px;float:left;background:${isBlack ? '#000' : '#fff'};"></div>`;
+                }
+            }
+            
+            qrHTML += '<div style="clear:both;"></div></div>';
+            qrHTML += `<div class="qr-code-label">Booking #${bookingId}</div>`;
+            
+            container.innerHTML = qrHTML;
+        }
+        
+        async function fetchBookingDetails(bookingId) {
+            try {
+                const response = await fetch(`/api/bookings/${bookingId}`);
+                if (!response.ok) {
+                    throw new Error('Failed to load booking details');
+                }
+                
+                const booking = await response.json();
+                displayBookingDetails(booking);
+                
+                // Also fetch show details
+                const showResponse = await fetch(`/api/shows/${booking.show_id}`);
+                if (showResponse.ok) {
+                    const show = await showResponse.json();
+                    displayShowDetails(show);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('booking-details').innerHTML = 
+                    `<div class="section">Error loading booking details: ${error.message}</div>`;
+            }
+        }
+        
+        function displayBookingDetails(booking) {
+            const detailsContainer = document.getElementById('booking-details');
+            
+            let seatsList = '';
+            if (booking.seat_ids && booking.seat_ids.length > 0) {
+                seatsList = '<div class="seat-list">' + 
+                    booking.seat_ids.map(id => `<span class="seat-tag">Seat ${id}</span>`).join('') + 
+                    '</div>';
+            }
+            
+            const bookingTime = new Date(booking.booking_time).toLocaleString();
+            
+            detailsContainer.innerHTML = `
+                <div class="section">
+                    <h3>Booking Reference</h3>
+                    <p style="font-size: 1.2rem; font-weight: 600; color: #1a73e8;">#${booking.id}</p>
+                </div>
+                
+                <div class="section">
+                    <h3>Booked By</h3>
+                    <p><strong>Name:</strong> ${booking.user_name || 'Guest'}</p>
+                    <p><strong>Email:</strong> ${booking.user_email || 'No email provided'}</p>
+                    <p><strong>Booking Time:</strong> ${bookingTime}</p>
+                </div>
+                
+                <div class="section">
+                    <h3>Selected Seats</h3>
+                    ${seatsList || 'No seats information available'}
+                </div>
+                
+                <div class="total">
+                    <h3>Total Amount</h3>
+                    <p>$${booking.total_amount.toFixed(2)}</p>
+                </div>
+            `;
+        }
+        
+        function displayShowDetails(show) {
+            const detailsContainer = document.getElementById('booking-details');
+            const showDate = new Date(show.start_time).toLocaleDateString();
+            const showTime = new Date(show.start_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            // Create show details section
+            const showDetails = `
+                <div class="section" style="background-color: #e3f2fd;">
+                    <h3>Show Details</h3>
+                    <p><strong>Date:</strong> ${showDate}</p>
+                    <p><strong>Time:</strong> ${showTime}</p>
+                    <p><strong>Screen:</strong> ${show.screen}</p>
+                    <p><strong>Duration:</strong> ${show.duration} minutes</p>
+                </div>
+            `;
+            
+            // Insert at the beginning of the container
+            detailsContainer.innerHTML = showDetails + detailsContainer.innerHTML;
+            
+            // Update page title with movie info if available
+            document.title = `Booking #${document.getElementById('booking-details').querySelector('p').textContent} - Cinema Booking`;
+        }
+    </script>
+</body>
+</html> 

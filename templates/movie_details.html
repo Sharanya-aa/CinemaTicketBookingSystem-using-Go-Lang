@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Details - Cinema Booking System</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2b3340 0%, #1a1e29 100%);
+            color: #fff;
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #64b5f6;
+        }
+
+        .movie-details {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .movie-card {
+            display: flex;
+            background: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            gap: 2rem;
+        }
+
+        .movie-card img {
+            width: 300px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .movie-info {
+            flex: 1;
+        }
+
+        .movie-info h1 {
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #1a1e29;
+        }
+
+        .movie-info p {
+            margin-bottom: 0.5rem;
+        }
+
+        .shows-section {
+            margin-top: 3rem;
+        }
+
+        .shows-section h2 {
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: #1a1e29;
+            font-weight: 600;
+        }
+
+        .shows-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .show-card {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .show-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+
+        .show-info p {
+            margin-bottom: 0.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: #1a73e8;
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+
+        .btn:hover {
+            background: #0d62d1;
+            box-shadow: 0 6px 15px rgba(26, 115, 232, 0.4);
+        }
+
+        footer {
+            background: linear-gradient(135deg, #2b3340 0%, #1a1e29 100%);
+            color: #fff;
+            text-align: center;
+            padding: 1.5rem 0;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Cinema Booking</div>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/movies">Movies</a></li>
+                <li><a href="#" id="loginBtn">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="movie-details">
+            <div id="movie-info">
+                <!-- Movie details will be loaded here dynamically -->
+            </div>
+            
+            <section class="shows-section">
+                <h2>Available Shows</h2>
+                <div class="shows-grid">
+                    <div id="shows-container">
+                        <!-- Shows will be loaded here dynamically -->
+                    </div>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Cinema Booking System. All rights reserved.</p>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get movie ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const movieId = urlParams.get('id');
+
+        if (movieId) {
+            loadMovieDetails(movieId);
+            loadShows(movieId);
+        } else {
+            alert('No movie ID provided');
+            window.location.href = '/movies';
+        }
+    });
+
+    async function loadMovieDetails(movieId) {
+        try {
+            const response = await fetch(`/api/movies/details?id=${movieId}`);
+            if (!response.ok) {
+                throw new Error('Failed to load movie details');
+            }
+
+            const movie = await response.json();
+            displayMovieInfo(movie);
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to load movie details');
+        }
+    }
+
+    function displayMovieInfo(movie) {
+        const movieInfoDiv = document.getElementById('movie-info');
+        movieInfoDiv.innerHTML = `
+            <div class="movie-card">
+                <img src="${movie.poster_url}" alt="${movie.title}" onerror="this.onerror=null;this.src='/static/images/default-poster.jpg';">
+                <div class="movie-info">
+                    <h1>${movie.title}</h1>
+                    <p>${movie.description}</p>
+                    <p><strong>Duration:</strong> ${movie.duration} minutes</p>
+                    <p><strong>Rating:</strong> ${movie.rating}</p>
+                </div>
+            </div>
+        `;
+    }
+
+    async function loadShows(movieId) {
+        try {
+            const response = await fetch(`/api/movies/shows?id=${movieId}`);
+            if (!response.ok) {
+                throw new Error('Failed to load shows');
+            }
+
+            const shows = await response.json();
+            displayShows(shows);
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to load shows');
+        }
+    }
+
+    function displayShows(shows) {
+        const container = document.getElementById('shows-container');
+        if (!container) return;
+
+        if (shows.length === 0) {
+            container.innerHTML = '<p>No shows available for this movie.</p>';
+            return;
+        }
+
+        container.innerHTML = shows.map(show => `
+            <div class="show-card" data-show-id="${show.id}">
+                <div class="show-info">
+                    <p><strong>Time:</strong> ${new Date(show.start_time).toLocaleString()}</p>
+                    <p><strong>Screen:</strong> ${show.screen}</p>
+                    <p><strong>Price:</strong> $${show.price.toFixed(2)}</p>
+                </div>
+                <div class="show-actions">
+                    <a href="/show?id=${show.id}" class="btn">View Show</a>
+                </div>
+            </div>
+        `).join('');
+    }
+    </script>
+</body>
+</html>

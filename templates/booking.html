@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Tickets - Cinema Booking System</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Cinema Booking</div>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/movies">Movies</a></li>
+                <li><a href="#" id="loginBtn">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="booking-section">
+            <div id="show-info">
+                <!-- Show details will be loaded here dynamically -->
+            </div>
+
+            <div class="screen-display">
+                <div class="screen">SCREEN</div>
+                <div id="seats-container" class="seat-grid">
+                    <!-- Seats will be loaded here dynamically -->
+                </div>
+            </div>
+
+            <div class="booking-summary">
+                <h3>Selected Seats</h3>
+                <div id="selected-seats">
+                    <!-- Selected seats will be displayed here -->
+                </div>
+                <div class="total-amount">
+                    <p>Total Amount: $<span id="total">0</span></p>
+                </div>
+                <button onclick="createBooking()" class="btn">Confirm Booking</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Cinema Booking System. All rights reserved.</p>
+    </footer>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html> 

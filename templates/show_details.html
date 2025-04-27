@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show Details - Cinema Booking System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+        background-color: #f8f9fa;
+        color: #333;
+        line-height: 1.6;
+    }
+
+    header {
+        background: linear-gradient(135deg, #2b3340 0%, #1a1e29 100%);
+        color: #fff;
+        padding: 1rem 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    .logo {
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    nav ul {
+        display: flex;
+        list-style: none;
+        gap: 2rem;
+    }
+
+    nav a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+    nav a:hover {
+        color: #64b5f6;
+    }
+
+    main {
+        min-height: calc(100vh - 130px);
+    }
+
+    .show-details {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 2rem;
+    }
+    
+    @media (max-width: 768px) {
+        .show-details {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .show-info-card {
+        background: #fff;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        height: fit-content;
+        position: sticky;
+        top: 100px;
+    }
+
+    .show-info-card h1 {
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        color: #1a1e29;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 0.5rem;
+    }
+
+    .show-info-card p {
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .show-info-card strong {
+        color: #555;
+    }
+    
+    .show-info-card .price {
+        font-size: 1.2rem;
+        color: #1a73e8;
+        font-weight: 600;
+    }
+
+    .seats-section {
+        background: #fff;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+    
+    .seats-section h2 {
+        margin-bottom: 1.5rem;
+        text-align: center;
+        color: #1a1e29;
+        font-weight: 600;
+    }
+
+    .screen {
+        background: linear-gradient(135deg, #302b63 0%, #24243e 100%);
+        color: white;
+        text-align: center;
+        padding: 1rem;
+        margin: 1.5rem 0 3rem;
+        border-radius: 4px;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        position: relative;
+    }
+    
+    .screen:after {
+        content: '';
+        position: absolute;
+        bottom: -15px;
+        left: 10%;
+        right: 10%;
+        height: 15px;
+        background: rgba(0,0,0,0.1);
+        border-radius: 50%;
+        filter: blur(5px);
+    }
+
+    .seats-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin: 2rem 0;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .seat-row {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+    }
+
+    .row-label {
+        width: 30px;
+        text-align: center;
+        font-weight: 700;
+        color: #555;
+    }
+
+    .seat {
+        width: 40px;
+        height: 40px;
+        border: 1px solid #ddd;
+        border-radius: 8px 8px 0 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        background: #fff;
+        transition: all 0.2s;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .seat:before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+    }
+
+    .seat.available:before {
+        background: #81c784;
+    }
+    
+    .seat.available:hover {
+        transform: translateY(-5px);
+        border-color: #81c784;
+    }
+
+    .seat.selected {
+        background: #81c784;
+        color: white;
+        border-color: #81c784;
+        transform: translateY(-5px);
+        box-shadow: 0 5px 10px rgba(129, 199, 132, 0.3);
+    }
+    
+    .seat.selected:before {
+        background: #4caf50;
+    }
+
+    .seat.booked {
+        background: #ff8a80;
+        color: white;
+        cursor: not-allowed;
+        border-color: #ff8a80;
+        opacity: 0.8;
+    }
+    
+    .seat.booked:before {
+        background: #e53935;
+    }
+
+    .seat-info {
+        margin: 2rem 0;
+    }
+
+    .seat-types {
+        display: flex;
+        justify-content: center;
+        gap: 2.5rem;
+        margin: 1.5rem 0;
+        flex-wrap: wrap;
+    }
+
+    .seat-type {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .seat-type .seat {
+        width: 25px;
+        height: 25px;
+        cursor: default;
+        font-size: 0.7rem;
+    }
+
+    .booking-summary {
+        text-align: center;
+        margin: 2rem 0;
+        padding: 1.5rem;
+        background: #f5f9ff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border-left: 4px solid #1a73e8;
+    }
+    
+    .booking-summary h3 {
+        margin-bottom: 1rem;
+        color: #1a73e8;
+    }
+    
+    .booking-summary .total-price {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #1a73e8;
+        margin-top: 0.5rem;
+    }
+
+    .book-btn {
+        display: block;
+        width: 100%;
+        max-width: 300px;
+        margin: 2rem auto;
+        padding: 1rem;
+        background: #1a73e8;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        font-size: 1.1rem;
+        font-weight: 500;
+        transition: all 0.3s;
+        box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+    }
+
+    .book-btn:hover:not(:disabled) {
+        background: #0d62d1;
+        box-shadow: 0 6px 15px rgba(26, 115, 232, 0.4);
+        transform: translateY(-2px);
+    }
+
+    .book-btn:disabled {
+        background: #e0e0e0;
+        color: #9e9e9e;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+
+    footer {
+        background: linear-gradient(135deg, #2b3340 0%, #1a1e29 100%);
+        color: #fff;
+        text-align: center;
+        padding: 1.5rem 0;
+        margin-top: 2rem;
+        font-size: 0.9rem;
+    }
+
+    /* Modal styles */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        overflow: auto;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal.show {
+        display: flex;
+    }
+
+    .modal-content {
+        background-color: #fff;
+        max-width: 500px;
+        width: 90%;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        position: relative;
+        padding: 2rem;
+        animation: modal-appear 0.3s ease-out;
+    }
+
+    @keyframes modal-appear {
+        from {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 24px;
+        cursor: pointer;
+        color: #999;
+        transition: color 0.2s;
+    }
+
+    .modal-close:hover {
+        color: #1a1e29;
+    }
+
+    .modal-content h2 {
+        color: #1a1e29;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        font-size: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #555;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-family: inherit;
+        transition: border-color 0.2s;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: #1a73e8;
+        box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+    }
+
+    #modal-summary {
+        margin: 1.5rem 0;
+        padding: 1rem;
+        background-color: #f5f9ff;
+        border-radius: 8px;
+        border-left: 4px solid #1a73e8;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .modal-cancel {
+        padding: 0.75rem 1.5rem;
+        background-color: #f5f5f5;
+        color: #666;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.2s;
+    }
+
+    .modal-cancel:hover {
+        background-color: #e0e0e0;
+    }
+
+    .modal-submit {
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(90deg, #1a73e8, #64b5f6);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+        transition: all 0.3s;
+    }
+
+    .modal-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(26, 115, 232, 0.4);
+    }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Cinema Booking</div>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/movies">Movies</a></li>
+                <li><a href="#" id="loginBtn">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="show-details">
+            <div id="show-info">
+                <!-- Show details will be loaded here dynamically -->
+            </div>
+            
+            <section class="seats-section">
+                <h2>Select Your Seats</h2>
+                <div class="screen">SCREEN</div>
+                <div class="seats-container" id="seats-container">
+                    <!-- Seats will be loaded here dynamically -->
+                    <div class="loading">Loading seats...</div>
+                </div>
+                <div class="seat-info">
+                    <div class="seat-types">
+                        <div class="seat-type">
+                            <div class="seat available"></div>
+                            <span>Available</span>
+                        </div>
+                        <div class="seat-type">
+                            <div class="seat selected"></div>
+                            <span>Selected</span>
+                        </div>
+                        <div class="seat-type">
+                            <div class="seat booked"></div>
+                            <span>Booked</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="booking-summary" id="booking-summary">
+                    <!-- Booking summary will be shown here -->
+                    <p>Please select your seats</p>
+                </div>
+                <button id="book-btn" class="book-btn" disabled>Book Selected Seats</button>
+            </section>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Cinema Booking System. All rights reserved.</p>
+    </footer>
+
+    <!-- Add modal dialog to the HTML body before the closing body tag -->
+    <div id="booking-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>Complete Your Booking</h2>
+            <form id="booking-form">
+                <div class="form-group">
+                    <label for="user-name">Your Name</label>
+                    <input type="text" id="user-name" name="user-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-email">Your Email</label>
+                    <input type="email" id="user-email" name="user-email" required>
+                </div>
+                <div class="booking-summary" id="modal-summary">
+                    <!-- Booking summary will appear here -->
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="modal-cancel">Cancel</button>
+                    <button type="submit" class="modal-submit">Confirm Booking</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    let selectedSeats = new Set();
+    let currentShow = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const showId = urlParams.get('id');
+
+        if (showId) {
+            loadShowDetails(showId);
+            loadSeats(showId);
+        } else {
+            alert('No show ID provided');
+            window.location.href = '/movies';
+        }
+
+        document.getElementById('book-btn').addEventListener('click', handleBooking);
+    });
+
+    async function loadShowDetails(showId) {
+        try {
+            const response = await fetch(`/api/shows/${showId}`);
+            if (!response.ok) {
+                throw new Error('Failed to load show details');
+            }
+
+            const show = await response.json();
+            currentShow = show;
+            displayShowInfo(show);
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to load show details');
+        }
+    }
+
+    function displayShowInfo(show) {
+        const showInfoDiv = document.getElementById('show-info');
+        showInfoDiv.innerHTML = `
+            <div class="show-info-card">
+                <h1>Show Details</h1>
+                <p><strong>Screen:</strong> <span>${show.screen}</span></p>
+                <p><strong>Date:</strong> <span>${new Date(show.start_time).toLocaleDateString()}</span></p>
+                <p><strong>Time:</strong> <span>${new Date(show.start_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span></p>
+                <p><strong>Duration:</strong> <span>${show.duration} minutes</span></p>
+                <p><strong>Price:</strong> <span class="price">$${show.price.toFixed(2)}</span></p>
+            </div>
+        `;
+    }
+
+    async function loadSeats(showId) {
+        try {
+            const response = await fetch(`/api/shows/${showId}/seats`);
+            if (!response.ok) {
+                throw new Error('Failed to load seats');
+            }
+
+            const seats = await response.json();
+            displaySeats(seats);
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to load seats');
+        }
+    }
+
+    function displaySeats(seats) {
+        const container = document.getElementById('seats-container');
+        if (!container) return;
+
+        // Group seats by row
+        const seatsByRow = seats.reduce((acc, seat) => {
+            if (!acc[seat.row]) {
+                acc[seat.row] = {};
+            }
+            // Only keep one entry per seat number (take the last one)
+            acc[seat.row][seat.seat_number] = seat;
+            return acc;
+        }, {});
+
+        // Create HTML for each row
+        const rowsHtml = Object.entries(seatsByRow)
+            .sort(([rowA], [rowB]) => rowA.localeCompare(rowB))
+            .map(([row, rowSeatsObj]) => {
+                // Convert object to array and sort by seat number
+                const rowSeatsArray = Object.values(rowSeatsObj);
+                const sortedSeats = rowSeatsArray.sort((a, b) => a.seat_number - b.seat_number);
+                
+                console.log(`Row ${row}: ${sortedSeats.length} unique seats`);
+                
+                return `
+                    <div class="seat-row">
+                        <div class="row-label">${row}</div>
+                        ${sortedSeats.map(seat => `
+                            <div class="seat ${seat.status}"
+                                 data-seat-id="${seat.id}"
+                                 data-row="${seat.row}"
+                                 data-number="${seat.seat_number}"
+                                 onclick="toggleSeat(${seat.id})">
+                                ${seat.seat_number}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }).join('');
+
+        container.innerHTML = rowsHtml;
+        updateBookingSummary();
+    }
+
+    function toggleSeat(seatId) {
+        const seatElement = document.querySelector(`[data-seat-id="${seatId}"]`);
+        if (!seatElement || seatElement.classList.contains('booked')) return;
+
+        if (selectedSeats.has(seatId)) {
+            selectedSeats.delete(seatId);
+            seatElement.classList.remove('selected');
+        } else {
+            selectedSeats.add(seatId);
+            seatElement.classList.add('selected');
+        }
+
+        updateBookingSummary();
+    }
+
+    function updateBookingSummary() {
+        const summaryDiv = document.getElementById('booking-summary');
+        const bookBtn = document.getElementById('book-btn');
+
+        if (selectedSeats.size === 0) {
+            summaryDiv.innerHTML = '<p>Please select your seats</p>';
+            bookBtn.disabled = true;
+            return;
+        }
+
+        const totalPrice = currentShow ? (currentShow.price * selectedSeats.size) : 0;
+        summaryDiv.innerHTML = `
+            <h3>Booking Summary</h3>
+            <p>${selectedSeats.size} seat${selectedSeats.size > 1 ? 's' : ''} selected</p>
+            <p class="total-price">$${totalPrice.toFixed(2)}</p>
+        `;
+        bookBtn.disabled = false;
+    }
+
+    async function handleBooking() {
+        if (selectedSeats.size === 0) return;
+
+        // Show modal instead of prompt
+        const modal = document.getElementById('booking-modal');
+        const modalSummary = document.getElementById('modal-summary');
+        const totalPrice = currentShow ? (currentShow.price * selectedSeats.size) : 0;
+        
+        // Update the summary in the modal
+        modalSummary.innerHTML = `
+            <h3>Booking Summary</h3>
+            <p>${selectedSeats.size} seat${selectedSeats.size > 1 ? 's' : ''} selected</p>
+            <p class="total-price">$${totalPrice.toFixed(2)}</p>
+        `;
+        
+        // Show the modal
+        modal.classList.add('show');
+        
+        // Handle form submission
+        const form = document.getElementById('booking-form');
+        form.onsubmit = async function(event) {
+            event.preventDefault();
+            
+            const userName = document.getElementById('user-name').value;
+            const userEmail = document.getElementById('user-email').value;
+            
+            if (!userName || !userEmail) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/bookings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        show_id: currentShow.id,
+                        seat_ids: Array.from(selectedSeats),
+                        user_name: userName,
+                        user_email: userEmail
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Booking failed');
+                }
+
+                const result = await response.json();
+                modal.classList.remove('show');
+                alert('Booking successful!');
+                window.location.href = `/booking/${result.id}`;
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to create booking. Please try again.');
+            }
+        };
+    }
+    
+    // Add modal close functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('booking-modal');
+        const closeBtn = document.querySelector('.modal-close');
+        const cancelBtn = document.querySelector('.modal-cancel');
+        
+        // Close modal when clicking the X
+        closeBtn.addEventListener('click', function() {
+            modal.classList.remove('show');
+        });
+        
+        // Close modal when clicking the Cancel button
+        cancelBtn.addEventListener('click', function() {
+            modal.classList.remove('show');
+        });
+        
+        // Close modal when clicking outside the modal content
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.classList.remove('show');
+            }
+        });
+    });
+    </script>
+</body>
+</html> 
